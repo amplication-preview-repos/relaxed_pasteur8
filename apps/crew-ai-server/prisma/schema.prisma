@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Result {
+  createdAt   DateTime  @default(now())
+  crew        Crew?     @relation(fields: [crewId], references: [id])
+  crewId      String?
+  generatedAt DateTime?
+  id          String    @id @default(cuid())
+  output      Json?
+  task        Task?     @relation(fields: [taskId], references: [id])
+  taskId      String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Task {
+  createdAt   DateTime        @default(now())
+  description String?
+  id          String          @id @default(cuid())
+  results     Result[]
+  scheduledAt DateTime?
+  status      EnumTaskStatus?
+  title       String?
+  updatedAt   DateTime        @updatedAt
+}
+
+model Agent {
+  createdAt DateTime       @default(now())
+  crew      Crew?          @relation(fields: [crewId], references: [id])
+  crewId    String?
+  email     String?
+  id        String         @id @default(cuid())
+  name      String?
+  role      EnumAgentRole?
+  updatedAt DateTime       @updatedAt
+}
+
+model Crew {
+  agents    Agent[]
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  results   Result[]
+  updatedAt DateTime @updatedAt
+}
+
+enum EnumTaskStatus {
+  Option1
+}
+
+enum EnumAgentRole {
+  Option1
+}
